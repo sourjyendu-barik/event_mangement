@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
+  secure: true, //true in pro false in local
+  sameSite: "None", //
 };
 
 // // LOGIN
@@ -56,6 +56,8 @@ const register = async (req, res) => {
         message: "Email already exists",
       });
     }
+    console.log(error);
+
     res.status(500).json({ success: false, message: error.message });
   }
 };

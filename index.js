@@ -2,41 +2,37 @@
 require("dotenv").config();
 const User = require("./models/model.users");
 const express = require("express");
-const cors = require("cors");
 const auth = require("./middlewire/auth");
 const connectDB = require("./db/db.connectDb");
 const cookieParser = require("cookie-parser");
 //express instance
 const app = express();
 //registering global midllewires
+
 const cors = require("cors");
 
-const allowedOrigin = "https://event-mangement-app-woad.vercel.app";
+const allowedOrigins = [
+  "https://event-mangement-app-woad.vercel.app",
+  "http://localhost:5173",
+];
 
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: function (origin, callback) {
+      // allow requests with no origin (Postman, mobile apps)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
-// Handle preflight requests
-app.options(
-  "*",
-  cors({
-    origin: allowedOrigin,
-    credentials: true,
-  }),
-);
-
-// Extra safety (ensures headers always present)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", allowedOrigin);
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
