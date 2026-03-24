@@ -1,6 +1,21 @@
 const User = require("../models/model.users");
 const jwt = require("jsonwebtoken");
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+};
+
+// // LOGIN
+// res.cookie("token", token, {
+//   ...cookieOptions,
+//   maxAge: 24 * 60 * 60 * 1000,
+// });
+
+// // LOGOUT
+// res.clearCookie("token", cookieOptions);
+
 // REGISTER
 const register = async (req, res) => {
   try {
@@ -85,9 +100,7 @@ const login = async (req, res) => {
     });
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      ...cookieOptions,
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -112,11 +125,7 @@ const login = async (req, res) => {
 // LOGOUT
 const logout = async (req, res) => {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: false, // true in production
-      sameSite: "Lax",
-    });
+    res.clearCookie("token", cookieOptions);
 
     return res.status(200).json({
       success: true,
