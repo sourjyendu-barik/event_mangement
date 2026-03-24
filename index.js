@@ -9,16 +9,34 @@ const cookieParser = require("cookie-parser");
 //express instance
 const app = express();
 //registering global midllewires
-const corsOption = {
-  origin: [
-    "http://localhost:5173",
-    "https://event-mangement-app-woad.vercel.app",
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-app.use(cors(corsOption));
+const cors = require("cors");
+
+const allowedOrigin = "https://event-mangement-app-woad.vercel.app";
+
+app.use(
+  cors({
+    origin: allowedOrigin,
+    credentials: true,
+  }),
+);
+
+// Handle preflight requests
+app.options(
+  "*",
+  cors({
+    origin: allowedOrigin,
+    credentials: true,
+  }),
+);
+
+// Extra safety (ensures headers always present)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", allowedOrigin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
