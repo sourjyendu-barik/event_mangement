@@ -129,4 +129,21 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, getUserBookings, verifyPayment };
+const cancelBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.body;
+    const deletedBooking = await Booking.findByIdAndDelete(bookingId);
+    if (!deletedBooking) {
+      res.status(404).json({ success: false, message: "Booking not found" });
+    }
+    res
+      .status(200)
+      .json({ success: true, message: "cancel booking successfull" });
+  } catch (error) {}
+};
+module.exports = {
+  createBooking,
+  getUserBookings,
+  verifyPayment,
+  cancelBooking,
+};
